@@ -59,14 +59,6 @@ def blur_image(letter):
         return f'blur_{b_param}', GaussianBlur(b_param)
 
 
-# def noise_image(letter):
-#     n_param = augmentation_params['noise']
-#     if n_param == 0:
-#         return None
-#     else:
-#         return f'noise_{n_param}', AddGaussianNoise()
-
-
 def deduce_augmented_letter(letter, transformer_names):
     if 'horizontal_flip' in transformer_names:
         if letter == 'iv':
@@ -125,8 +117,7 @@ if __name__ == '__main__':
         'rotate': [0, 30],
         'horizontal_flip': [0, 1],
         'vertical_flip': [0, 1],
-        'blur': [0, 3, 7, 11],
-        # 'noise': [0, 1]
+        'blur': [0, 3, 7, 11]
     }
 
     # dict of augmentation methods to functions
@@ -134,7 +125,6 @@ if __name__ == '__main__':
                                     'horizontal_flip': horizontal_flip_image,
                                     'vertical_flip': vertical_flip_image,
                                     'blur': blur_image,
-                                    # 'noise': noise_image
                                     }
 
     print("Augmenting data...")

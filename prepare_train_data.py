@@ -4,12 +4,12 @@ import pickle
 import random
 import shutil
 
-import run_train_eval
+import run_train_eval_as_func
 from config import Config
 import wandb
 
 # set seed
-random.seed(42)
+random.seed(10)
 
 
 def run():
@@ -40,11 +40,16 @@ def run():
         'blur_3': len([img for letter in selected_augmented_samples for img in selected_augmented_samples[letter] if 'blur_3' in img]),
         'blur_7': len([img for letter in selected_augmented_samples for img in selected_augmented_samples[letter] if 'blur_7' in img]),
         'blur_11': len([img for letter in selected_augmented_samples for img in selected_augmented_samples[letter] if 'blur_11' in img]),
+        'amount_per_letter': config.TOTAL_IMGS_PER_LETTER
     }
+    augmented_statistics['sum_of_aug'] = (augmented_statistics['blur_3'] + augmented_statistics['blur_7'] +
+                                          augmented_statistics['rotate'] + augmented_statistics['blur_11'] +
+                                          augmented_statistics['vertical_flip'] + augmented_statistics['horizontal_flip']) / \
+                                         augmented_statistics['amount_per_letter'] if 'amount_per_letter' in augmented_statistics else None
 
     with wandb.init(project="hw2", entity='course094295', config=augmented_statistics):
         # run train_eval.py and get best_acc
-        best_acc = run_train_eval.run()
+        best_acc = run_train_eval_as_func.run()
         # upload results to WandB
         wandb.log({"best_acc": best_acc})
 
@@ -62,8 +67,14 @@ def run():
 if __name__ == '__main__':
     config = Config()
 
+    # amount per letter options
+    options = [200, 300, 400, 500, 600, 700, 802]
+
     # loging to WandB
     wandb.login()
-    for i in range(25):
+    for i in range(100):
         print("Starting run {}".format(i), "************************************************")
+        # select amount per letter
+        config.TOTAL_IMGS_PER_LETTER = random.choice(options)
+        print("Running with amount per letter: {}".format(config.TOTAL_IMGS_PER_LETTER))
         run()

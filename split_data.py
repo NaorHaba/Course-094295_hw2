@@ -56,6 +56,14 @@ def split_train_val_test_for_letter(letter: str, letter_img_paths: List):
 
 
 def split_train_val_test():
+    # remove dirs if they exist
+    if os.path.exists(config.TRAIN_DATA_DIR):
+        shutil.rmtree(config.TRAIN_DATA_DIR)
+    if os.path.exists(config.VAL_DATA_DIR):
+        shutil.rmtree(config.VAL_DATA_DIR)
+    if os.path.exists(config.TEST_DATA_DIR):
+        shutil.rmtree(config.TEST_DATA_DIR)
+
     img_paths_per_letter = get_image_paths_per_letter(data_dir=config.ALL_DATA_DIR)
     for letter in img_paths_per_letter:
         split_train_val_test_for_letter(letter, img_paths_per_letter[letter])
@@ -65,7 +73,7 @@ def split_train_val_test():
         split_images = get_image_paths_per_letter(data_dir=split)
         for letter in split_images:
             count += len(split_images[letter])
-    assert count == sum([len(img_paths_per_letter[let]) for let in img_paths_per_letter]), f"{count} != {len(img_paths_per_letter)}"
+    assert count == sum([len(img_paths_per_letter[let]) for let in img_paths_per_letter]), f"{count} != {sum([len(img_paths_per_letter[let]) for let in img_paths_per_letter])}"
 
 
 if __name__ == '__main__':

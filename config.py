@@ -14,6 +14,7 @@ class Config:
         self.VAL_DATA_DIR = os.path.join(self.MAIN_DATA_DIR, "val")
         self.TEST_DATA_DIR = os.path.join(self.MAIN_DATA_DIR, "test")
         self.AUGMENTED_DATA_DIR = os.path.join(self.MAIN_DATA_DIR, "augmented_train")
+        self.AUGMENTATION_INFO_PATH = os.path.join(self.MAIN_DATA_DIR, "selected_augmentations.pkl")
 
         # Roman Letters
         self.ROMAN_LETTERS = {'i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii', 'viii', 'ix', 'x'}
