@@ -33,7 +33,7 @@ torch.manual_seed(0)
 def run():
     # Training hyperparameters
     BATCH_SIZE = 16
-    NUM_EPOCHS = 100
+    NUM_EPOCHS = 35
     LR = 0.001
 
     # Paths to your train and val directories
@@ -196,4 +196,4 @@ def run():
     plt.legend(loc='best')
     plt.savefig('train_val_acc_plot.png')
 
-    return best_acc
+    return best_acc, model_ft

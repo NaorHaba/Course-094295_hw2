@@ -3,6 +3,9 @@ import os
 import pickle
 import random
 import shutil
+import time
+
+import torch
 
 import run_train_eval_as_func
 from config import Config
@@ -12,7 +15,7 @@ import wandb
 random.seed(10)
 
 
-def run():
+def run(i, global_best_acc):
     # select and copy augmented samples to train dir
     selected_augmented_samples = {}
     for letter in config.ROMAN_LETTERS:
@@ -42,14 +45,10 @@ def run():
         'blur_11': len([img for letter in selected_augmented_samples for img in selected_augmented_samples[letter] if 'blur_11' in img]),
         'amount_per_letter': config.TOTAL_IMGS_PER_LETTER
     }
-    augmented_statistics['sum_of_aug'] = (augmented_statistics['blur_3'] + augmented_statistics['blur_7'] +
-                                          augmented_statistics['rotate'] + augmented_statistics['blur_11'] +
-                                          augmented_statistics['vertical_flip'] + augmented_statistics['horizontal_flip']) / \
-                                         augmented_statistics['amount_per_letter'] if 'amount_per_letter' in augmented_statistics else None
 
     with wandb.init(project="hw2", entity='course094295', config=augmented_statistics):
         # run train_eval.py and get best_acc
-        best_acc = run_train_eval_as_func.run()
+        best_acc, model_wts = run_train_eval_as_func.run()
         # upload results to WandB
         wandb.log({"best_acc": best_acc})
 
@@ -57,11 +56,18 @@ def run():
         with open(os.path.join(wandb.run.dir, "selected_augmentations.pkl"), "wb") as f:
             pickle.dump(selected_augmented_samples, f)
 
+        # save model weights
+        if best_acc > global_best_acc:
+            global_best_acc = best_acc
+            torch.save(model_wts, "best_trained_model.pt")
+
     # remove selected samples from train dir
     for letter in selected_augmented_samples:
         for aug_img_path in selected_augmented_samples[letter]:
             new_path = os.path.join(config.TRAIN_DATA_DIR, letter, os.path.dirname(aug_img_path).split('/')[-1] + '_' + os.path.basename(aug_img_path))
             os.remove(new_path)
+
+    return global_best_acc
 
 
 if __name__ == '__main__':
@@ -70,6 +76,7 @@ if __name__ == '__main__':
     # amount per letter options
     options = [200, 300, 400, 500, 600, 700, 802]
 
+    global_best_acc = 0
     # loging to WandB
     wandb.login()
     for i in range(100):
@@ -77,4 +84,4 @@ if __name__ == '__main__':
         # select amount per letter
         config.TOTAL_IMGS_PER_LETTER = random.choice(options)
         print("Running with amount per letter: {}".format(config.TOTAL_IMGS_PER_LETTER))
-        run()
+        global_best_acc = run(i, global_best_acc)
