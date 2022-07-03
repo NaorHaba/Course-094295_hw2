@@ -15,14 +15,6 @@ from config import Config
 random.seed(42)
 
 
-class AddGaussianNoise(object):
-    def __init__(self):
-        pass
-
-    def __call__(self, tensor):
-        return tensor + np.random.randn(tensor.shape[0], tensor.shape[1], tensor.shape[2])
-
-
 def rotate_image(letter):
     r_param = augmentation_params['rotate']
     if r_param == 0:
