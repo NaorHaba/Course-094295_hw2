@@ -5,7 +5,7 @@ import torch.nn as nn
 from torchvision import models, transforms, datasets
 from tqdm import tqdm
 
-torch.manual_seed(10)
+torch.manual_seed(11)
 
 
 if __name__ == '__main__':
@@ -61,8 +61,9 @@ if __name__ == '__main__':
     model_ft = model_ft.to(device)
 
     # load best model weights
-    best_model_wts = 'best_trained_model.pt'
-    model_ft.load_state_dict(torch.load(best_model_wts).state_dict())
+    best_model_wts = 'trained_model.pt'
+    model_ft.load_state_dict(torch.load(best_model_wts))
+
 
     # test the model
     acc = test_model(model_ft, test_dataloader, dataset_size)
