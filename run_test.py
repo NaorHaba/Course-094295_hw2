@@ -5,7 +5,7 @@ import torch.nn as nn
 from torchvision import models, transforms, datasets
 from tqdm import tqdm
 
-torch.manual_seed(0)
+torch.manual_seed(10)
 
 
 if __name__ == '__main__':
@@ -30,7 +30,7 @@ if __name__ == '__main__':
     def test_model(model, dataloader, dataset_size):
         """Responsible for running the training and testidation phases for the requested model."""
 
-        model.etest()   # Set model to etestuate mode
+        model.eval()  # Set model to evaluate mode
 
         running_corrects = 0
 
@@ -61,8 +61,8 @@ if __name__ == '__main__':
     model_ft = model_ft.to(device)
 
     # load best model weights
-    best_model_wts = ''
-    model_ft.load_state_dict(torch.load(best_model_wts))
+    best_model_wts = 'best_trained_model.pt'
+    model_ft.load_state_dict(torch.load(best_model_wts).state_dict())
 
     # test the model
     acc = test_model(model_ft, test_dataloader, dataset_size)
